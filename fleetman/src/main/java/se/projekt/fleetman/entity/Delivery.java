@@ -1,7 +1,7 @@
 package se.projekt.fleetman.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalDateTime; // Import för datum/tid
 
 @Entity
 public class Delivery {
@@ -11,32 +11,25 @@ public class Delivery {
     private Long id;
 
     @Column(nullable = false)
-    private Long orderId; // Koppling till ordern som ska levereras
+    private String status;
 
     @Column(nullable = false)
-    private String status; // T.ex., "På väg", "Levererad"
+    private String driverName;
 
-    @Column(nullable = false)
-    private String driverName; // Leveransansvarig
+    @Column(nullable = true)
+    private Long orderId; // Fält för orderId
 
-    @Column(nullable = false)
-    private LocalDateTime deliveryTime; // Tid för leverans
+    @Column(nullable = true)
+    private LocalDateTime deliveryTime;
 
-    // Getter och Setter
+    // Getters och Setters för alla fält
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(Long orderId) {
-        this.orderId = orderId;
     }
 
     public String getStatus() {
@@ -53,6 +46,14 @@ public class Delivery {
 
     public void setDriverName(String driverName) {
         this.driverName = driverName;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     public LocalDateTime getDeliveryTime() {

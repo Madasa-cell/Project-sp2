@@ -17,29 +17,11 @@ public class DeliveryController {
         this.deliveryService = deliveryService;
     }
 
-    @PostMapping
-    public ResponseEntity<Delivery> createDelivery(@RequestBody Delivery delivery) {
-        Delivery createdDelivery = deliveryService.createDelivery(delivery);
-        return ResponseEntity.ok(createdDelivery);
-    }
-
-    @PutMapping("/{deliveryId}/status")
-    public ResponseEntity<Delivery> updateDeliveryStatus(
-            @PathVariable Long deliveryId,
-            @RequestParam String status) {
-        Delivery updatedDelivery = deliveryService.updateDeliveryStatus(deliveryId, status);
-        return ResponseEntity.ok(updatedDelivery);
-    }
-
-    @GetMapping("/order/{orderId}")
-    public ResponseEntity<List<Delivery>> getDeliveriesByOrderId(@PathVariable Long orderId) {
-        List<Delivery> deliveries = deliveryService.getDeliveriesByOrderId(orderId);
-        return ResponseEntity.ok(deliveries);
-    }
-
-    @GetMapping
-    public ResponseEntity<List<Delivery>> getAllDeliveries() {
-        List<Delivery> deliveries = deliveryService.getAllDeliveries();
-        return ResponseEntity.ok(deliveries);
+    // Endpoint för att uppdatera leveransstatus
+    @PutMapping("/{id}/status")
+    public ResponseEntity<Delivery> updateDeliveryStatus(@PathVariable Long id, @RequestParam String status) {
+        return deliveryService.updateDeliveryStatus(id, status)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
