@@ -1,6 +1,6 @@
 package se.projekt.fleetman.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import se.projekt.fleetman.entity.Delivery;
@@ -9,19 +9,39 @@ import se.projekt.fleetman.repository.DeliveryRepository;
 @Service
 public class FleetmanService {
 
-    @Autowired
-    private RestTemplate restTemplate;
+    // Läser URL för OrderService från application.properties
+    @Value("${order.service.url}")
+    private String orderServiceUrl;
 
-    @Autowired
-    private DeliveryRepository deliveryRepository;
+    // Läser URL för DeliveryService från application.properties
+    @Value("${delivery.service.url}")
+    private String deliveryServiceUrl;
 
-    // Metod för att anropa OrderService och hämta orderdetaljer
+    private final RestTemplate restTemplate;
+    private final DeliveryRepository deliveryRepository;
+
+    // Konstruktor för att injicera beroenden
+    public FleetmanService(RestTemplate restTemplate, DeliveryRepository deliveryRepository) {
+        this.restTemplate = restTemplate;
+        this.deliveryRepository = deliveryRepository;
+    }
+
+    /**
+     * Hämta orderdetaljer från OrderService
+     *
+     * @param orderId ID för ordern som ska hämtas
+     * @return Orderdetaljer som en String
+     */
     public String getOrderDetails(Long orderId) {
-        String url = "http://localhost:8082/api/orders/" + orderId; // Byt port om OrderService använder en annan
+        String url = orderServiceUrl + "/api/orders/" + orderId;
         return restTemplate.getForObject(url, String.class);
     }
 
-    // Metod för att skapa en ny leverans i DeliveryService
+    /**
+     * Skapa en ny leverans i DeliveryService
+     *
+     * @param delivery Leveransobjekt som ska sparas
+     */
     public void createDelivery(Delivery delivery) {
         deliveryRepository.save(delivery);
     }
