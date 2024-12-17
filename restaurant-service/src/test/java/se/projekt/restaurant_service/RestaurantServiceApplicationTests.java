@@ -8,6 +8,6 @@ class RestaurantServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
+		// Detta är ett grundläggande test för att kontrollera att applikationskontexten laddas
 	}
-
 }
