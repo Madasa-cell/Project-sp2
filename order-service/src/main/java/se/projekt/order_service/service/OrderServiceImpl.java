@@ -10,6 +10,7 @@ import se.projekt.order_service.util.ExternalServiceClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -43,8 +44,11 @@ public class OrderServiceImpl implements OrderService {
             // Fetch customer details
             String customerDetailsJson = externalServiceClient.getCustomerDetails(customerId, addressId);
             Map<String, Object> customerDetails = objectMapper.readValue(customerDetailsJson, Map.class);
+
+            // Extract customer and address information
             Map<String, Object> customer = (Map<String, Object>) customerDetails.get("customer");
-            Map<String, Object> address = ((Map[]) customerDetails.get("addresses"))[0];
+            List<Map<String, Object>> addresses = (List<Map<String, Object>>) customerDetails.get("addresses");
+            Map<String, Object> address = addresses.get(0);
 
             // Set restaurant and customer names
             this.restaurantName = (String) restaurantDetails.get("restaurantName");
