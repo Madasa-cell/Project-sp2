@@ -14,6 +14,11 @@ public class CustomerWithAddressResponseDTO {
         this.addresses = addresses;
     }
 
+    public CustomerWithAddressResponseDTO(Customer customer, Address address) {
+        this.customer = customer;
+        this.addresses = List.of(address);
+    }
+
     public Customer getCustomer() {
         return customer;
     }

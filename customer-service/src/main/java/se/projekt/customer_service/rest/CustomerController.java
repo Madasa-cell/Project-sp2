@@ -24,6 +24,13 @@ public class CustomerController {
         return customerService.getAllCustomers();
     }
 
+    @GetMapping("/{customerId}/addresses/{addressId}")
+    public ResponseEntity<CustomerWithAddressResponseDTO> getCustomerIdWithAddressIdByCustomerId(
+            @PathVariable Long customerId, @PathVariable Long addressId
+    ) {
+        return ResponseEntity.ok(customerService.getCustomerWithAddressIdByCustomerId(customerId, addressId));
+    }
+
     @GetMapping("/{id}")
     public Customer getCustomerById(@PathVariable Long id) {
         return customerService.getCustomerById(id);

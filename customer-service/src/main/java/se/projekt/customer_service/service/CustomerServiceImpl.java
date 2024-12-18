@@ -5,6 +5,7 @@ import se.projekt.customer_service.data.AddressRepository;
 import se.projekt.customer_service.data.CustomerRepository;
 import se.projekt.customer_service.domain.Address;
 import se.projekt.customer_service.domain.Customer;
+import se.projekt.customer_service.rest.CustomerWithAddressResponseDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +42,21 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
+    public CustomerWithAddressResponseDTO getCustomerWithAddressIdByCustomerId(Long customerId, Long addressId) {
+        Customer customer = customerRepository.findById(customerId).orElseThrow(
+                () -> new RuntimeException("Customer with ID: " + customerId + " not found."));
+
+        Address address = addressRepository.findById(addressId).orElseThrow(
+                () -> new RuntimeException("Address with ID: " + addressId + " not found."));
+
+        if (!address.getCustomerId().equals(customerId)) {
+            throw new RuntimeException("Address ID: " + addressId +
+                    " does not belong to CustomerID: " + customerId);
+        }
+
+        return new CustomerWithAddressResponseDTO(customer, address);
+    }
+    @Override
     public Customer createCustomer(Customer newCustomer, List<Address> addresses) {
         Customer savedCustomer = customerRepository.save(newCustomer);
 
@@ -58,7 +74,6 @@ public class CustomerServiceImpl implements CustomerService {
         Customer existingCustomer = getCustomerById(id);
         existingCustomer.setFirstName(updateCustomer.getFirstName());
         existingCustomer.setLastName(updateCustomer.getLastName());
-        existingCustomer.setFullName(updateCustomer.getFirstName(), updateCustomer.getLastName());
         existingCustomer.setEmail(updateCustomer.getEmail());
         existingCustomer.setPhone(updateCustomer.getPhone());
         return customerRepository.save(existingCustomer);
