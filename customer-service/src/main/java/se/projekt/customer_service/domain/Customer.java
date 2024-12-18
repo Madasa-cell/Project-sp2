@@ -10,7 +10,6 @@ public class Customer {
 
     private String firstName;
     private String lastName;
-    private String fullName;
     private String email;
     private String phone;
 
@@ -19,7 +18,6 @@ public class Customer {
     public Customer(String firstName, String lastName, String email, String phone){
         this.firstName = firstName;
         this.lastName = lastName;
-        this.fullName = String.join(" ", firstName, lastName);
         this.email = email;
         this.phone = phone;
     }
@@ -46,15 +44,6 @@ public class Customer {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String firstName, String lastName) {
-        String[] strings = {firstName, lastName};
-        this.fullName = String.join(" ", strings);
     }
 
     public String getEmail() {
