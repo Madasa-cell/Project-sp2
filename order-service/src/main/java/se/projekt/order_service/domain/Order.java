@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "orders") // Avoid using the reserved keyword 'order'
 public class Order {
 
     @Id

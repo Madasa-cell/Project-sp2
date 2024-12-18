@@ -1,14 +1,16 @@
 package se.projekt.order_service.service;
 
 import jakarta.annotation.PostConstruct;
-import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import se.projekt.order_service.domain.Order;
 import se.projekt.order_service.dto.OrderResponseDTO;
 import se.projekt.order_service.repository.OrderRepository;
 import se.projekt.order_service.util.ExternalServiceClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -19,43 +21,58 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ExternalServiceClient externalServiceClient;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     private Order testOrder;
     private String customerName;
     private String restaurantName;
 
     @PostConstruct
     public void initTestOrder() {
-        // Hardcode the IDs for the test order
-        Long customerId = 2L;
-        Long restaurantId = 1L;
-        String items = "TestItem1,TestItem2";
-        double totalPrice = 100.0;
+        try {
+            // Hardcoded IDs for the test order
+            Long customerId = 2L;
+            Long restaurantId = 1L;
+            Long menuItemId = 3L;
+            Long addressId = 3L;
 
-        // Call external endpoints (hardcoded) to get names
-        this.customerName = externalServiceClient.getCustomerName(customerId);
-        this.restaurantName = externalServiceClient.getRestaurantName(restaurantId);
+            // Fetch restaurant details
+            String restaurantDetailsJson = externalServiceClient.getRestaurantDetails(restaurantId, menuItemId);
+            Map<String, Object> restaurantDetails = objectMapper.readValue(restaurantDetailsJson, Map.class);
 
-        // Create and save the test order
-        testOrder = new Order();
-        testOrder.setCustomerId(customerId);
-        testOrder.setRestaurantId(restaurantId);
-        testOrder.setItems(items);
-        testOrder.setTotalPrice(totalPrice);
-        testOrder.setOrderDate(LocalDateTime.now());
+            // Fetch customer details
+            String customerDetailsJson = externalServiceClient.getCustomerDetails(customerId, addressId);
+            Map<String, Object> customerDetails = objectMapper.readValue(customerDetailsJson, Map.class);
+            Map<String, Object> customer = (Map<String, Object>) customerDetails.get("customer");
+            Map<String, Object> address = ((Map[]) customerDetails.get("addresses"))[0];
 
-        testOrder = orderRepository.save(testOrder);
+            // Set restaurant and customer names
+            this.restaurantName = (String) restaurantDetails.get("restaurantName");
+            this.customerName = customer.get("firstName") + " " + customer.get("lastName");
+
+            // Create the test order
+            testOrder = new Order();
+            testOrder.setCustomerId(customerId);
+            testOrder.setRestaurantId(restaurantId);
+            testOrder.setItems((String) restaurantDetails.get("menuItemName"));
+            testOrder.setTotalPrice(Double.parseDouble(restaurantDetails.get("price").toString()));
+            testOrder.setOrderDate(LocalDateTime.now());
+
+            // Save the test order in the database
+            testOrder = orderRepository.save(testOrder);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize test order", e);
+        }
     }
 
     @Override
     public OrderResponseDTO getOrderById(Long orderId) {
-        // Since we only have one test order, and we know its ID is 1, we can just return it.
-        // But to follow the pattern, we actually fetch from DB:
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
-        return mapToResponseDTO(order, customerName, restaurantName);
+        return mapToResponseDTO(order);
     }
 
-    private OrderResponseDTO mapToResponseDTO(Order order, String customerName, String restaurantName) {
+    private OrderResponseDTO mapToResponseDTO(Order order) {
         OrderResponseDTO dto = new OrderResponseDTO();
         dto.setId(order.getId());
         dto.setCustomerId(order.getCustomerId());
@@ -67,5 +84,4 @@ public class OrderServiceImpl implements OrderService {
         dto.setOrderDate(order.getOrderDate());
         return dto;
     }
-
 }

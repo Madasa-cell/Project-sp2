@@ -8,13 +8,13 @@ public class ExternalServiceClient {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public String getCustomerName(Long customerId) {
-        String url = "http://localhost:8080/api/customers/" + customerId;
+    public String getRestaurantDetails(Long restaurantId, Long menuItemId) {
+        String url = "http://localhost:8081/restaurants/" + restaurantId + "/" + menuItemId;
         return restTemplate.getForObject(url, String.class);
     }
 
-    public String getRestaurantName(Long restaurantId) {
-        String url = "http://localhost:8081/api/restaurants/" + restaurantId;
+    public String getCustomerDetails(Long customerId, Long addressId) {
+        String url = "http://localhost:8082/customers/" + customerId + "/addresses/" + addressId;
         return restTemplate.getForObject(url, String.class);
     }
 }
