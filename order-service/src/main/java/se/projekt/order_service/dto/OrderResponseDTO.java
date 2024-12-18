@@ -9,7 +9,8 @@ public class OrderResponseDTO {
     private String customerName;
     private String restaurantName;
     private String items;
-    private double totalPrice;
+    private Double totalPrice;
+    private String address; // New field
     private LocalDateTime orderDate;
 
     // Getters and Setters
@@ -61,12 +62,20 @@ public class OrderResponseDTO {
         this.items = items;
     }
 
-    public double getTotalPrice() {
+    public Double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(double totalPrice) {
+    public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public LocalDateTime getOrderDate() {

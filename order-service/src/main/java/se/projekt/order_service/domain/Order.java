@@ -4,9 +4,8 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "orders") // Avoid using the reserved keyword 'order'
+@Table(name = "orders")
 public class Order {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,7 +13,8 @@ public class Order {
     private Long customerId;
     private Long restaurantId;
     private String items;
-    private double totalPrice;
+    private Double totalPrice;
+    private String address; // New field for customer address
     private LocalDateTime orderDate;
 
     // Getters and Setters
@@ -50,12 +50,20 @@ public class Order {
         this.items = items;
     }
 
-    public double getTotalPrice() {
+    public Double getTotalPrice() {
         return totalPrice;
     }
 
-    public void setTotalPrice(double totalPrice) {
+    public void setTotalPrice(Double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public LocalDateTime getOrderDate() {
